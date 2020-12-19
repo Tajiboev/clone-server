@@ -1,80 +1,55 @@
 const express = require('express')
+const morgan = require('morgan')
 const bodyParser = require('body-parser')
-const {graphqlHTTP} = require('express-graphql')
-const { buildSchema } = require('graphql')
 const mongoose = require('mongoose')
+const chalk = require('chalk');
+const log = console.log;
 
-const Project = require('./models/project')
+const { pwd, dbname } = require('./config')
 
 const app = express()
 
+const productRoutes = require('./api/routes/products')
+
+
+mongoose.connect(`mongodb+srv://Mukhammadjon:${pwd}@restart.9oliw.mongodb.net/${dbname}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(()=>{
+        log(chalk.green.bold('Successfully connected to DB'))
+    })
+    .catch(error => {
+        log(chalk.red.bold('Failed to connect to DB'))
+    });
+
+app.use(morgan('dev'))
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-app.use('/graphql', graphqlHTTP({
-    schema: buildSchema(`
-        type Project {
-            _id: ID!
-            title: String!
-            description: String!
-            budget: Float!
-            date: String!
-        }
+// Handling CORS
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");    
+    if (req.method === 'OPTIONS') {
+        res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE");
+        return res.status(200).json({})
+    }
+    next();
+})
 
-        input ProjectInput {
-            title: String!
-            description: String!
-            budget: Float!
-            date: String!
-        }
+app.use('/products', productRoutes)
 
-        type RootQuery {
-            projects: [Project!]!
-        }
 
-        type RootMutation {
-            createProject(projectInput: ProjectInput): Project
-        }
+// Error handler
+app.use((req, res, next) => {
+    const error = new Error('Not found')
+    error.status = 404
+    next(error)
+})
 
-        schema {
-            query: RootQuery
-            mutation: RootMutation
-        }
-    `),
-    rootValue: {
-        projects: ()=>{
-            return Project.find()
-                    .then(projects => {
-                        return projects.map(project => {
-                            return {...project._doc, _id: project.id};
-                        })
-                    })
-        },
+app.use((error, req, res, next) => {
+    res.status(error.status || 500)
+    res.json({ error : {message: error.message } })
+})
 
-        createProject: (args)=>{
-            const project = new Project({
-                title: args.projectInput.title,
-                description: args.projectInput.description,
-                budget: +args.projectInput.budget,
-                date: new Date (args.projectInput.date)
-            })
-            return project.save().then(
-                result => {
-                    return {...result._doc, _id: result.id}
-                }
-            ).catch(
-                err=>{
-                    console.log(err)
-                    throw err
-                }
-            )
-        }
-    },
-    graphiql: true
-}))
+module.exports = app
 
-mongoose.connect(`mongodb+srv://Mukhammadjon:${process.env.MONGO_PASSWORD}@restartcluster0.9oliw.mongodb.net/${process.env.MONGO_DBNAME}?retryWrites=true&w=majority`)
-.then(
-    app.listen(3000)
-)
-.catch(err => {console.log(err)})
 
