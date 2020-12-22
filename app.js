@@ -10,8 +10,9 @@ const { pwd, dbname } = require('./config')
 const app = express()
 
 const productRoutes = require('./api/routes/products')
+// const userRoutes = require('./api/routes/users')
 
-
+mongoose.set('useCreateIndex', true)
 mongoose.connect(`mongodb+srv://Mukhammadjon:${pwd}@restart.9oliw.mongodb.net/${dbname}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(()=>{
         log(chalk.green.bold('Successfully connected to DB'))
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/products', productRoutes)
+// app.use('/users', userRoutes)
 
 
 // Error handler
@@ -47,7 +49,12 @@ app.use((req, res, next) => {
 
 app.use((error, req, res, next) => {
     res.status(error.status || 500)
-    res.json({ error : {message: error.message } })
+    res.json({
+            sussess: false,
+            error: {
+                message: error.message
+            }
+    })
 })
 
 module.exports = app
