@@ -1,16 +1,15 @@
 const express = require('express')
 const router = express.Router()
 const UsersController =  require('../controllers/users')
+const {createUser, login, deleteUser} = UsersController
 
 const checkAuth = require('../middleware/checkAuth')
-const checkUser = require('../middleware/checkUser')
+const {validateEmail, validatePassword} = require('../middleware/validateCredentials')
 
 
-router.post('/signup', UsersController.create_user)
-router.post('/login', UsersController.login)
+router.post('/signup', validateEmail, validatePassword, createUser)
+router.post('/login', validateEmail, validatePassword, login)
 
-router.delete('/:userId', checkAuth, checkUser, UsersController.delete_user)
-
-
+router.delete('/:userId', checkAuth, deleteUser)
 
 module.exports = router

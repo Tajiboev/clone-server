@@ -1,56 +1,30 @@
 const Product = require('../models/product')
 const mongoose = require('mongoose')
-const e = require('express')
+const ErrorWithStatusCode = require('../helpers/ErrorWithStatusCode');
 
-module.exports.getAllProducts = (req, res, next) => {
-    Product.find()
-        .select({__v: 0})
-        .exec()
-        .then(docs => {
-            res.status(200).json({
-                success: true,
-                count: docs.length,
-                products: docs
-            })
-        })
-        .catch((err) => {
-            res.status(500).json({
-                success: false,
-                errorMessage: "Failed to retrieve products",
-                error: err
-            })
-        })
+
+module.exports.getAllProducts = async function(req, res, next) {
+    try {
+        const products = await Product.find().select({__v: 0}).exec()
+        if (products) {
+            res.status(200).json(products)
+        } else {
+            throw new ErrorWithStatusCode("Failed to retrieve products", 500)
+        }
+    } catch (e) {
+        throw new ErrorWithStatusCode("WTF", 500)
+    }
 }
 
-module.exports.getProductById = (req, res, next) => {
+module.exports.getProductById = async function(req, res, next){
     const id = req.params.productId
-    Product.findById(id)
-        .select({__v: 0})
-        .exec()
-        .then((doc)=>{
-            if(doc){
-                res.status(200).json({
-                    success: true,
-                    product: doc
-                })
-            } else {
-                res.status(404).json({ 
-                    success: false,
-                    error: "Requested product not found",
-                })
-            }         
-        }).catch(err=>{
-            // trigger: invalid product id
-            let msg = "Internal Server Error"
-            if (err.kind === 'ObjectId'){
-                msg = "Invalid product ID. ID must be of type ObjectId"
-            }
-            res.status(500).json({
-                success: false,
-                errorMessage: msg,
-                error: err
-            })
-        })
+
+    const product = await Product.findById(id).select({__v: 0}).exec()
+    if (product) {
+        res.status(200).json(product)
+    } else {
+        throw new ErrorWithStatusCode("Product not found", 404)
+    }
 }
 
 module.exports.addNewProduct = (req, res, next) => {
@@ -60,7 +34,7 @@ module.exports.addNewProduct = (req, res, next) => {
         description: req.body.description,
         price: req.body.price,
         createdAt: new Date(),
-        // createdBy: req.userData._id
+        createdBy: req.userData._id
     })
 
     product.save()
@@ -71,7 +45,6 @@ module.exports.addNewProduct = (req, res, next) => {
             })
         }).catch(e => {
             res.status(500).json({
-                success: false,
                 errorMessage: "Failed to add new product",
                 errors: e.errors
             })
@@ -81,21 +54,13 @@ module.exports.addNewProduct = (req, res, next) => {
 
 module.exports.removeProduct = (req, res, next) => {
     const id = req.params.productId
-    Product.remove({_id: id})
+    Product.deleteOne({_id: id})
         .exec()
         .then(result => {
-            res.status(200).json({
-                success: true,
-                message: "Product has been removed",
-            })
+            res.status(200).json({message: "Product has been removed"})
         })
-        .catch(err => {
-            res.status(500).json({
-                success: false,
-                error: {
-                    message: "Failed to remove product",
-                }
-            })
+        .catch(e => {
+            res.status(500).json({errorMessage: "Failed to remove product"})
         })
 }
 
@@ -110,12 +75,7 @@ module.exports.updateProduct = (req, res, next)=>{
                 result: result
             })
         })
-        .catch(err => {
-            res.status(500).json({
-                success: false,
-                error: {
-                    message: "Failed to update product",
-                }
-            })
+        .catch(() => {
+            res.status(500).json({errorMessage: "Failed to update product"})
         })
 }
