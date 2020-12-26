@@ -4,26 +4,20 @@ const ErrorWithStatusCode = require('../helpers/ErrorWithStatusCode');
 
 
 module.exports.getAllProducts = async function(req, res, next) {
-    try {
-        const products = await Product.find().select({__v: 0}).exec()
-        if (products) {
-            res.status(200).json(products)
-        } else {
-            throw new ErrorWithStatusCode("Failed to retrieve products", 500)
-        }
-    } catch (e) {
-        throw new ErrorWithStatusCode("WTF", 500)
+    const products = await Product.find().select({__v: 0}).exec()
+    if (products) res.status(200).json(products)
+    else {
+        return next(new ErrorWithStatusCode("Failed to retrieve products", 500))
     }
 }
 
 module.exports.getProductById = async function(req, res, next){
     const id = req.params.productId
-
     const product = await Product.findById(id).select({__v: 0}).exec()
-    if (product) {
-        res.status(200).json(product)
-    } else {
-        throw new ErrorWithStatusCode("Product not found", 404)
+    
+    if (product) res.status(200).json(product) 
+    else {
+        return next(new ErrorWithStatusCode("Product not found", 404))
     }
 }
 

@@ -1,6 +1,9 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
+const cors = require('cors')
+const helmet = require('helmet')
+const compression = require('compression')
 
 const mongoose = require('mongoose')
 const { pwd, dbname } = require('./config')
@@ -21,23 +24,17 @@ mongoose.connect(`mongodb+srv://Mukhammadjon:${pwd}@restart.9oliw.mongodb.net/${
         log(chalk.red.bold('Failed to connect to DB', error))
     });
 
-app.use(morgan('dev'))
+
+app.use(helmet())    
+app.use(cors())
+app.use(compression())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use(morgan('dev'))
 
-// Handling CORS
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");    
-    if (req.method === 'OPTIONS') {
-        res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
-        return res.status(200).json({})
-    }
-    next();
-})
 
-app.use('/products', productRoutes)
-app.use('/users', userRoutes)
+app.use('/api/products', productRoutes)
+app.use('/api/users', userRoutes)
 
 
 // Error handler
@@ -49,7 +46,7 @@ app.use((req, res, next) => {
 
 app.use((error, req, res, next) => {
     // may log error here
-    res.status(error.statusCode || 500).json({ errorMessage: error.message, handler: "app" });
+    res.status(error.statusCode || 500).json({ errorMessage: error.message, errorHandler: "app" });
 });
 
 module.exports = app

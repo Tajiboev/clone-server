@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken')
 const { jwt_key } = require('../../config')
-
-
+const ErrorWithStatusCode = require('../helpers/ErrorWithStatusCode');
 
 module.exports = (req, res, next)=>{
     try {
@@ -10,6 +9,6 @@ module.exports = (req, res, next)=>{
         req.userData = decoded
         next()
     } catch (e) {
-        return res.status(401).json({errorMessage: "Authorization failed"})
+        next( new ErrorWithStatusCode('Authorization failed', 401))
     }
 }
