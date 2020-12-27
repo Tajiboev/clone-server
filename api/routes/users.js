@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const UsersController =  require('../controllers/users')
-const {createUser, login, getUserById, deleteUser} = UsersController
+const {createUser, login, getUserById, deleteUser, updateUser} = UsersController
 
 const checkAuth = require('../middleware/checkAuth')
 const {validateEmail, validatePassword} = require('../middleware/validateCredentials')
@@ -9,18 +9,23 @@ const {validateEmail, validatePassword} = require('../middleware/validateCredent
 const {methodError} = require('../helpers/methodError')
 
 router
-.route('/signup')
-.post(validateEmail, validatePassword, createUser)
-.all(methodError({allowed: ['POST']}))
+    .route('/signup')
+    .post(validateEmail, validatePassword, createUser)
+    .all(methodError({allowed: ['POST']}))
 
 
+router
+    .route('/login')
+    .post(validateEmail, validatePassword, login)
+    .all(methodError({allowed: ['POST']}))
 
 
-router.all('/signup', validateEmail, validatePassword, createUser)
-router.post('/login', validateEmail, validatePassword, login)
+router
+    .route('/')
+    .get(checkAuth, getUserById)
+    .delete(checkAuth, deleteUser)
+    .all(methodError({allowed: ['GET', 'DELETE']}))
 
-
-router.get('/:userId',checkAuth, getUserById)
-router.delete('/:userId', checkAuth, deleteUser)
+// router.patch('/:userId', updateUser)
 
 module.exports = router

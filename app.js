@@ -15,6 +15,9 @@ const chalk = require('chalk');
 const log = console.log;
 
 const app = express()
+const corsOptions = {
+  origin: 'http://localhost:3000',
+}
 
 mongoose.connect(`mongodb+srv://Mukhammadjon:${pwd}@restart.9oliw.mongodb.net/${dbname}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
     .then(()=>{
@@ -26,7 +29,7 @@ mongoose.connect(`mongodb+srv://Mukhammadjon:${pwd}@restart.9oliw.mongodb.net/${
 
 
 app.use(helmet())    
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(compression())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -46,7 +49,7 @@ app.use((req, res, next) => {
 
 app.use((error, req, res, next) => {
     // may log error here
-    res.status(error.statusCode || 500).json({ errorMessage: error.message, errorHandler: "app" });
+    res.status(error.statusCode || 500).json({ errorMessage: error.message });
 });
 
 module.exports = app

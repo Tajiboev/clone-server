@@ -60,8 +60,8 @@ module.exports.login = async function (req, res, next) {
 
 
 module.exports.getUserById = async function (req, res, next) {
-    if (req.userData._id === req.params.userId) return next(new ErrorWithStatusCode("Action prohibited", 403))
-    const id = req.params.userId;
+    if (req.userData._id === req.query.id) return next(new ErrorWithStatusCode("Action prohibited", 403))
+    const id = req.query.id;
     try {
         const user = await User.findById(id).select({password: 0, __v: 0}).exec()
         if (user) res.status(200).json(user) 
@@ -74,11 +74,11 @@ module.exports.getUserById = async function (req, res, next) {
 }
 
 module.exports.deleteUser = async function (req, res, next) {
-    if (req.userData._id === req.params.userId) return next(new ErrorWithStatusCode("Action prohibited", 403))
+    if (req.userData._id === req.query.id) return next(new ErrorWithStatusCode("Action prohibited", 403))
 
-    User.findOneAndDelete({_id: req.params.userId}, (error, doc) => {
+    User.findOneAndDelete({_id: req.query.id}, (error, doc) => {
         if(error) {
-            return next(new ErrorWithStatusCode("Failed to delete user a ", 400)) 
+            return next(new ErrorWithStatusCode("Failed to delete user", 400)) 
         }
 
         if (doc) return res.status(200).json({message: "User deleted", result: {
@@ -88,7 +88,9 @@ module.exports.deleteUser = async function (req, res, next) {
             deletedAt: new Date(),
         }})
         else {
-            return next(new ErrorWithStatusCode("Failed to delete user b", 400))
+            return next(new ErrorWithStatusCode("Failed to delete user", 400))
         }
     })
 }
+
+// TODO: add updateUser
