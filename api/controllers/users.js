@@ -60,7 +60,7 @@ module.exports.login = async function (req, res, next) {
 
 
 module.exports.getUserById = async function (req, res, next) {
-    if (req.userData._id === req.query.id) return next(new ErrorWithStatusCode("Action prohibited", 403))
+    if (req.userData._id !== req.query.id) return next(new ErrorWithStatusCode("Action prohibited", 403))
     const id = req.query.id;
     try {
         const user = await User.findById(id).select({password: 0, __v: 0}).exec()
@@ -74,7 +74,7 @@ module.exports.getUserById = async function (req, res, next) {
 }
 
 module.exports.deleteUser = async function (req, res, next) {
-    if (req.userData._id === req.query.id) return next(new ErrorWithStatusCode("Action prohibited", 403))
+    if (req.userData._id !== req.query.id) return next(new ErrorWithStatusCode("Action prohibited", 403))
 
     User.findOneAndDelete({_id: req.query.id}, (error, doc) => {
         if(error) {

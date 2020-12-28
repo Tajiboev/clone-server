@@ -26,6 +26,6 @@ router
     .delete(checkAuth, deleteUser)
     .all(methodError({allowed: ['GET', 'DELETE']}))
 
-// router.patch('/:userId', updateUser)
+//TODO: add router.patch('/:userId', updateUser)
 
 module.exports = router
