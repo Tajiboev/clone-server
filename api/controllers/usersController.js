@@ -8,35 +8,29 @@ const { jwt_key } = require('../../config')
 
 //post => users/signup
 module.exports.createUser = async function(req, res, next) {
-    const user = await User.findOne({email: req.body.email}).exec()
-    
-    if (user) return next(new ErrorWithStatusCode("User already exists", 409))
-    
-    else {
-        bcrypt.hash(req.body.password, 10, (err, hash)=>{
-            if(err) return next(new ErrorWithStatusCode("Failed to hash password", 500))
-            
-            else {
-                const newUser = new User({
-                        _id: new mongoose.Types.ObjectId(),
-                        email: req.body.email,
-                        password: hash,
-                        createdAt: new Date(),
-                    })
-                newUser.save()
-                    .then(result =>{
-                        res.status(201).json({message: 'User created', user: {
-                            id: result._id,
-                            email: result.email,
-                            createdAt: result.createdAt,
-                        } })
-                    })
-                    .catch(e =>{
-                        res.status(400).json({message: 'Failed to create user', error: e})
-                    })
-            }
-        })
-    }                 
+    const {email, password, username} = req.body
+ 
+    bcrypt.hash(password, 10, (err, hash)=>{
+        if(err) return next(new ErrorWithStatusCode("Failed to hash password", 500))
+        
+        else {
+            const newUser = new User({
+                    _id: new mongoose.Types.ObjectId(),
+                    email: email,
+                    password: hash,
+                    username: username,
+                    createdAt: new Date()
+                })
+            newUser.save()
+                .then(result =>{
+                    res.status(201).json({message: 'User created', user: result })
+                })
+                .catch(e =>{
+                    res.status(400).json({message: 'Failed to create user', error: e})
+                })
+        }
+    })
+                     
 }
 
 module.exports.login = async function (req, res, next) {

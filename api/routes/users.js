@@ -1,16 +1,17 @@
 const express = require('express')
 const router = express.Router()
-const UsersController =  require('../controllers/users')
-const {createUser, login, getUserById, deleteUser, updateUser} = UsersController
+const UsersController =  require('../controllers/usersController')
+const {createUser, login, getUser, deleteUser, updateUser} = UsersController
 
 const checkAuth = require('../middleware/checkAuth')
+const checkUser = require('../middleware/checkUser')
 const {validateEmail, validatePassword} = require('../middleware/validateCredentials')
 
 const {methodError} = require('../helpers/methodError')
 
 router
     .route('/signup')
-    .post(validateEmail, validatePassword, createUser)
+    .post(validateEmail, validatePassword, checkUser, createUser)
     .all(methodError({allowed: ['POST']}))
 
 
@@ -22,7 +23,7 @@ router
 
 router
     .route('/')
-    .get(checkAuth, getUserById)
+    .get(checkAuth, getUser)
     .delete(checkAuth, deleteUser)
     .all(methodError({allowed: ['GET', 'DELETE']}))
 

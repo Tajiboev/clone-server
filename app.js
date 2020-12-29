@@ -7,7 +7,7 @@ const compression = require('compression')
 
 
 
-const projectRoutes = require('./api/routes/projects')
+// const projectRoutes = require('./api/routes/projects')
 const userRoutes = require('./api/routes/users')
 
 
@@ -29,7 +29,7 @@ app.use(bodyParser.json())
 app.use(morgan('dev'))
 
 
-app.use('/api/projects', productRoutes)
+// app.use('/api/projects', projectRoutes)
 app.use('/api/users', userRoutes)
 
 

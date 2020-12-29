@@ -1,6 +1,15 @@
 const mongoose = require('mongoose')
+const { Schema } = mongoose;
 
-const userSchema = mongoose.Schema({
+const educationSchema = new Schema({ 
+    country: {type: String, required: true},
+    university: {type: String, required: true},
+    degree: {type: String, required: true},
+    start: {type: Date, required: true},
+    end: {type: Date, required: true}
+})
+
+const userSchema = new Schema({
     _id: mongoose.Schema.Types.ObjectId,
     email: {
         type: String, 
@@ -16,7 +25,7 @@ const userSchema = mongoose.Schema({
     accountType: {type: String, enum: ["freelancer", "employer"]},
     location: {type: String},
     skills: [String],
-    education: [String],
+    education: [educationSchema],
     experience: [String],
     password: {
         type: String, 
@@ -24,5 +33,6 @@ const userSchema = mongoose.Schema({
     },
     createdAt: {type: Date, default: Date.now},
 })
+
 
 module.exports = mongoose.model('User', userSchema)
