@@ -53,11 +53,12 @@ module.exports.login = async function (req, res, next) {
 }
 
 
-module.exports.getUserById = async function (req, res, next) {
-    if (req.userData._id !== req.query.id) return next(new ErrorWithStatusCode("Action prohibited", 403))
-    const id = req.query.id;
+module.exports.getUser = async function (req, res, next) {
+    const {username} = req.query
+    console.log("username:", username)
     try {
-        const user = await User.findById(id).select({password: 0, __v: 0}).exec()
+        console.log('try:', username)
+        const user = await User.findOne({username: username}).select({password: 0, __v: 0}).exec()
         if (user) res.status(200).json(user) 
         else {
             return next(new ErrorWithStatusCode("Failed to retrieve user data", 404))

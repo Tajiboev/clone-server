@@ -23,7 +23,7 @@ router
 
 router
     .route('/')
-    .get(checkAuth, getUser)
+    .get(getUser) //by id or username [make sure you don't send private fields in response]
     .delete(checkAuth, deleteUser)
     .all(methodError({allowed: ['GET', 'DELETE']}))
 

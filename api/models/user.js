@@ -32,7 +32,7 @@ const userSchema = new Schema({
         required: [true, "Password is required"],
     },
     createdAt: {type: Date, default: Date.now},
-})
+}, {strictQuery: true})
 
 
 module.exports = mongoose.model('User', userSchema)

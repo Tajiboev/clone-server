@@ -16,11 +16,6 @@ const app = express()
 // connect to mongodb with mongoose 
 require('./connectDB')
 
-
-// const corsOptions = {
-//   origin: 'http://localhost:3000',
-// }
-
 app.use(helmet())    
 app.use(cors())
 app.use(compression())
