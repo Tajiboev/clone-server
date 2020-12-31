@@ -12,8 +12,8 @@ module.exports.validateEmail = (req, res, next) => {
 
 module.exports.validatePassword = (req, res, next)=>{
         // Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:
-        const validPassword = req.body.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
-        if (!validPassword) throw new ErrorWithStatusCode("Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter and one number", 400)
+        const validPassword = req.body.password.match(/^(?=.*?[A-z])(?=.*?[0-9]).{8,}$/)
+        if (!validPassword) throw new ErrorWithStatusCode("Password must contain minimum eight characters and include at least one number", 400)
         
         next()
 }

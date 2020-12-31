@@ -8,6 +8,7 @@ const { jwt_key } = require('../../config')
 
 //post => users/signup
 module.exports.createUser = async function(req, res, next) {
+    console.log('not called')
     const {email, password, username} = req.body
  
     bcrypt.hash(password, 10, (err, hash)=>{
@@ -15,17 +16,15 @@ module.exports.createUser = async function(req, res, next) {
         
         else {
             User.create({
-                _id: new mongoose.Types.ObjectId(),
-                private: {
-                    email: email,
-                    password: hash,
-                    emailStatus: "in-use"
-                },
+                email: email,
+                password: hash,
+                emailStatus: "in-use",
                 username: username,
-                createdAt: new Date(),
             }, (err, result)=>{
-                if (err) return next(new ErrorWithStatusCode("Failed to create user", 400))
-                res.status(201).json({message: 'User created', user: result })
+                if (err) {
+                    return next(new ErrorWithStatusCode(err.message, 400))
+                }
+                res.status(201).json({message: 'User created', user: result})
             })
             
             // newUser.save()

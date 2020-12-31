@@ -4,14 +4,14 @@ const UsersController =  require('../controllers/usersController')
 const {createUser, login, getUser, deleteUser, updateUser} = UsersController
 
 const checkAuth = require('../middleware/checkAuth')
-const checkUser = require('../middleware/checkUser')
+const checkExistingUser = require('../middleware/checkExistingUser')
 const {validateEmail, validatePassword} = require('../middleware/validateCredentials')
 
 const {methodError} = require('../helpers/methodError')
 
 router
     .route('/signup')
-    .post(validateEmail, validatePassword, checkUser, createUser)
+    .post(validateEmail, validatePassword, checkExistingUser, createUser)
     .all(methodError({allowed: ['POST']}))
 
 
