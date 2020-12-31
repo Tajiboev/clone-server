@@ -9,8 +9,7 @@ const educationSchema = new Schema({
     end: {type: Date, required: true}
 })
 
-const userSchema = new Schema({
-    _id: mongoose.Schema.Types.ObjectId,
+const privateSchema = new Schema({
     email: {
         type: String, 
         required: true, 
@@ -18,19 +17,24 @@ const userSchema = new Schema({
         lowercase: true,
         trim: true 
     },
+    password: {
+        type: String, 
+        required: [true, "Password is required"],
+    },
+    emailStatus: {type: String, enum: ["in-use", "pending", "verified"]}
+})
+
+const userSchema = new Schema({
+    _id: mongoose.Schema.Types.ObjectId,
     username: {type: String, unique: true, trim: true, minLength: [5, "Username must be at least 5 characters long"]},
+    private: privateSchema,
     name: {type: String},
     bio: {type: String},
-    emailStatus: {type: String, enum: ["in-use", "pending", "verified"]},
     accountType: {type: String, enum: ["freelancer", "employer"]},
     location: {type: String},
     skills: [String],
     education: [educationSchema],
     experience: [String],
-    password: {
-        type: String, 
-        required: [true, "Password is required"],
-    },
     createdAt: {type: Date, default: Date.now},
 }, {strictQuery: true})
 

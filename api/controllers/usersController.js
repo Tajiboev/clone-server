@@ -14,20 +14,27 @@ module.exports.createUser = async function(req, res, next) {
         if(err) return next(new ErrorWithStatusCode("Failed to hash password", 500))
         
         else {
-            const newUser = new User({
-                    _id: new mongoose.Types.ObjectId(),
+            User.create({
+                _id: new mongoose.Types.ObjectId(),
+                private: {
                     email: email,
                     password: hash,
-                    username: username,
-                    createdAt: new Date()
-                })
-            newUser.save()
-                .then(result =>{
-                    res.status(201).json({message: 'User created', user: result })
-                })
-                .catch(e =>{
-                    res.status(400).json({message: 'Failed to create user', error: e})
-                })
+                    emailStatus: "in-use"
+                },
+                username: username,
+                createdAt: new Date(),
+            }, (err, result)=>{
+                if (err) return next(new ErrorWithStatusCode("Failed to create user", 400))
+                res.status(201).json({message: 'User created', user: result })
+            })
+            
+            // newUser.save()
+            //     .then(result =>{
+                    
+            //     })
+            //     .catch(e =>{
+            //         res.status(400).json({message: 'Failed to create user', error: e})
+            //     })
         }
     })
                      

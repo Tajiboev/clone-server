@@ -5,7 +5,9 @@ module.exports = async (req, res, next)=>{
     const {email, username} = req.body
     if (email && username) {
         try {
+            console.log(email)
             const emailTaken = await User.exists({ email: email })
+            console.log(emailTaken)
             if (emailTaken) return next(new ErrorWithStatusCode('User with this email already exists', 409))
             
             const usernameTaken = await User.exists({ username: username })
