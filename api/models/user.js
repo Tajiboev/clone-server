@@ -34,7 +34,7 @@ const userSchema = new Schema({
     emailStatus: {type: String, enum: ["in-use", "pending", "verified"]},
     name: {type: String},
     bio: {type: String},
-    accountType: {enum: ["freelancer", "employer"]},
+    accountType: {type: String, enum: ["freelancer", "employer"]},
     location: {type: String},
     skills: [String],
     education: [educationSchema],
