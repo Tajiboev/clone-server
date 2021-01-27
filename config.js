@@ -1,8 +1,6 @@
-const dotenv = require('dotenv');
-dotenv.config()
+import dotenv from "dotenv";
+dotenv.config();
 
-module.exports = {
-    pwd: process.env.MONGO_PASSWORD,
-    dbname: process.env.MONGO_DBNAME,
-    jwt_key: process.env.JWT_KEY
-}
+export const pwd = process.env.MONGO_PASSWORD;
+export const dbname = process.env.MONGO_DBNAME;
+export const jwt_key = process.env.JWT_KEY;

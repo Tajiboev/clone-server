@@ -1,11 +1,11 @@
-const User = require("../models/user");
-const ErrorWithStatusCode = require("../helpers/ErrorWithStatusCode");
+import User from "../models/user.js";
+import ErrorWithStatusCode from "../helpers/ErrorWithStatusCode.js";
 
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { jwt_key } = require("../../config");
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { jwt_key } from "../../config.js";
 
-module.exports.createUser = async function (req, res, next) {
+export const createUser = async function (req, res, next) {
   const { email, password, username } = req.body;
 
   bcrypt.hash(password, 10, (err, hash) => {
@@ -29,7 +29,7 @@ module.exports.createUser = async function (req, res, next) {
   });
 };
 
-module.exports.login = async function (req, res, next) {
+export const login = async function (req, res, next) {
   const { email } = req.body;
   const user = await User.find({ email: email }).exec();
   if (!user) return next(new ErrorWithStatusCode("Authorization failed", 401));
@@ -51,7 +51,7 @@ module.exports.login = async function (req, res, next) {
   });
 };
 
-module.exports.getUser = async function (req, res, next) {
+export const getUser = async function (req, res, next) {
   const { username } = req.query;
   try {
     const user = await User.findOne({ username: username })
@@ -66,7 +66,7 @@ module.exports.getUser = async function (req, res, next) {
   }
 };
 
-module.exports.deleteUser = async function (req, res, next) {
+export const deleteUser = async function (req, res, next) {
   if (req.userData._id !== req.query.id)
     return next(new ErrorWithStatusCode("Action prohibited", 403));
 

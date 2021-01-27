@@ -1,32 +1,34 @@
-const express = require('express')
-const router = express.Router()
-const UsersController =  require('../controllers/usersController')
-const {createUser, login, getUser, deleteUser, updateUser} = UsersController
+import { Router } from "express";
 
-const checkAuth = require('../middleware/checkAuth')
-const checkExistingUser = require('../middleware/checkExistingUser')
-const {validateEmail, validatePassword} = require('../middleware/validateCredentials')
+//controllers
+import { createUser, login, getUser, deleteUser } from "../controllers/usersController.js";
 
-const {methodError} = require('../helpers/methodError')
+//middleware
+import { validateEmail, validatePassword } from "../middleware/validateCredentials.js";
+import checkAuth from "../middleware/checkAuth.js";
+import checkExistingUser from "../middleware/checkExistingUser.js";
 
-router
-    .route('/signup')
-    .post(validateEmail, validatePassword, checkExistingUser, createUser)
-    .all(methodError({allowed: ['POST']}))
+//helpers
+import { methodError } from "../helpers/methodError.js";
 
+const router = Router();
 
 router
-    .route('/login')
-    .post(validateEmail, validatePassword, login)
-    .all(methodError({allowed: ['POST']}))
-
+  .route("/signup")
+  .post(validateEmail, validatePassword, checkExistingUser, createUser)
+  .all(methodError({ allowed: ["POST"] }));
 
 router
-    .route('/')
-    .get(getUser) //by id or username [make sure you don't send private fields in response]
-    .delete(checkAuth, deleteUser)
-    .all(methodError({allowed: ['GET', 'DELETE']}))
+  .route("/login")
+  .post(validateEmail, validatePassword, login)
+  .all(methodError({ allowed: ["POST"] }));
+
+router
+  .route("/")
+  .get(getUser) //by id or username [make sure you don't send private fields in response]
+  .delete(checkAuth, deleteUser)
+  .all(methodError({ allowed: ["GET", "DELETE"] }));
 
 //TODO: add router.patch('/:userId', updateUser)
 
-module.exports = router
+export default router;

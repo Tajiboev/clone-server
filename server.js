@@ -1,10 +1,13 @@
-const http = require('http')
-const app = require('./app')
-const chalk = require('chalk')
-const log = console.log
-const port = process.env.PORT || 3001
+import { createServer } from "http";
+import app from "./app.js";
+import chalk from "chalk";
 
-const server = http.createServer(app)
+const { greenBright } = chalk;
+const port = process.env.PORT || 3001;
+const log = console.log;
 
-server.listen(port, ()=>{log(chalk.greenBright(`\nServer listening on port ${port}`))})
+const server = createServer(app);
 
+server.listen(port, () => {
+  log(greenBright(`\nServer listening on port ${port}`));
+});

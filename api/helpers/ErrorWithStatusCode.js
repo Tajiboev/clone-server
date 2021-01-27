@@ -5,4 +5,4 @@ class ErrorWithStatusCode extends Error {
   }
 }
 
-module.exports = ErrorWithStatusCode;
+export default ErrorWithStatusCode;
