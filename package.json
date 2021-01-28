@@ -2,7 +2,7 @@
   "name": "restart-server",
   "version": "1.0.0",
   "description": "server for my project",
-  "main": "index.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
     "start": "nodemon server.js"

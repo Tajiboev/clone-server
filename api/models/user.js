@@ -14,13 +14,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    username: {
-      type: String,
-      unique: true,
-      trim: true,
-      minLength: [5, "Username must be at least 5 characters long"],
-    },
-    emailStatus: { type: String, enum: ["in-use", "pending", "verified"] },
+    verified: { type: Boolean, default: false },
   },
   { strictQuery: true, timestamps: true }
 );

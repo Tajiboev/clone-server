@@ -4,7 +4,8 @@ export const validateEmail = (req, res, next) => {
   const validEmail = req.body.email.match(
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
   );
-  if (!validEmail) throw new ErrorWithStatusCode("Please provide a valid email address", 400);
+  if (!validEmail)
+    return next(new ErrorWithStatusCode("Please provide a valid email address", 400));
   // const valid = new RegExp(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)
   // return valid.test(email)
   next();
@@ -13,11 +14,7 @@ export const validateEmail = (req, res, next) => {
 export const validatePassword = (req, res, next) => {
   // Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:
   const validPassword = req.body.password.match(/^(?=.*?[A-z])(?=.*?[0-9]).{8,}$/);
-  if (!validPassword)
-    throw new ErrorWithStatusCode(
-      "Password must contain minimum eight characters and include at least one number",
-      400
-    );
+  if (!validPassword) return next(new ErrorWithStatusCode("Please provide a valid password", 400));
 
   next();
 };
